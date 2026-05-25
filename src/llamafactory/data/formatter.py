@@ -105,7 +105,19 @@ class FunctionFormatter(StringFormatter):
                 if not isinstance(tool_calls, list):  # parallel function call
                     tool_calls = [tool_calls]
 
-                return [FunctionCall(tc["name"], json.dumps(tc["arguments"], ensure_ascii=False)) for tc in tool_calls]
+                return [
+                    FunctionCall(
+                        tc["name"],
+                        # Accept both the OpenAI wire format (arguments already
+                        # a JSON string) and the dict form. Re-serializing a
+                        # string would double-encode it and break downstream
+                        # tool formatters that expect to ``json.loads`` once.
+                        tc["arguments"]
+                        if isinstance(tc["arguments"], str)
+                        else json.dumps(tc["arguments"], ensure_ascii=False),
+                    )
+                    for tc in tool_calls
+                ]
             except json.JSONDecodeError:
                 raise RuntimeError(f"Invalid JSON format in function message: {str([content])}.")
 
