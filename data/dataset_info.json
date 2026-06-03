@@ -747,7 +747,8 @@
     "folder": "python"
   },
   "SciderTraj": {
-    "file_name": "../../dataset/datafiles",
+    "hf_hub_url": "leonardklin/OpenSciDER-SFT-8K",
+    "subset": "openscider",
     "formatting": "openai",
     "columns": {
       "messages": "messages"
